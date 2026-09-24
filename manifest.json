@@ -1,0 +1,13 @@
+{
+  "name": "DayPilot 日航 · 今日事 AI 闭环",
+  "short_name": "日航",
+  "description": "早上 AI 规划今日事，晚上 AI 复盘打分。带 LLM 输出质量评估流水线的个人效能 Agent。",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f5f6fa",
+  "theme_color": "#4f6df5",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
