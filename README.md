@@ -1,7 +1,22 @@
+<div align="center">
+
 # DayPilot 日航 🧭
 
-> 早规划 · 晚复盘 · 数据说话。
-> 一个带 **LLM 输出质量评估流水线（Eval Pipeline）** 的 AI 个人效能 Agent，纯前端、零后端、手机浏览器打开即用。
+**早规划 · 晚复盘 · 数据说话**
+
+一个带 **LLM 输出质量评估流水线（Eval Pipeline）** 的 AI 个人效能 Agent
+纯前端、零后端、零依赖，手机浏览器打开即用
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-在线体验-4f6df5?style=for-the-badge)](https://jin2004-cmd.github.io/daypilot)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge)](LICENSE)
+[![Vanilla JS](https://img.shields.io/badge/Stack-Vanilla%20JS%20·%20No%20Build-333333?style=for-the-badge)](#技术栈)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-22c55e?style=for-the-badge)](#参与贡献)
+
+**[在线体验](https://jin2004-cmd.github.io/daypilot)** · **[使用说明](#快速开始)** · **[Eval 质量门](#核心亮点eval-质量门-)** · **[English](#english)**
+
+</div>
+
+---
 
 ## 这是什么
 
@@ -17,9 +32,31 @@ DayPilot 的不同之处在于：**每一次 LLM 输出都要过一道质量门*
 📊 每周  数据看板 + 一键生成周报
 ```
 
+## 截图
+
+<div align="center">
+
+| 桌面端 · 今日 | 桌面端 · AI 规划（eval 拦截重试） |
+|---|---|
+| <img src="docs/shot-desktop-today.png" width="420" alt="桌面端今日视图" /> | <img src="docs/shot-desktop-plan.png" width="420" alt="AI 规划与 eval 质量门" /> |
+
+| 移动端 · 今日（深色） | 移动端 · 数据看板 + Eval 日志 |
+|---|---|
+| <img src="docs/shot-mobile-dark.png" width="200" alt="移动端深色模式" /> | <img src="docs/shot-mobile-data.png" width="200" alt="数据看板与 eval 日志" /> |
+
+</div>
+
 ## 核心亮点：Eval 质量门 🔍
 
-所有 AI 输出（规划 / 复盘）都必须通过双层评估：
+所有 AI 输出（规划 / 复盘）都必须通过双层评估，这是本项目与其他「AI 套壳待办」的本质区别：
+
+```
+LLM 生成 ──► L1 规则校验（确定性）──► L2 质量打分（LLM-as-Judge）──► 通过 ✔
+                │                         │
+                └──► 不达标 ──► 自动重试（最多 2 次）──► 取历史最佳兜底
+                                    │
+                                    └──► 全程写入 Eval 日志（数据页可查）
+```
 
 | 层级 | 机制 | 校验内容 |
 |---|---|---|
@@ -29,6 +66,7 @@ DayPilot 的不同之处在于：**每一次 LLM 输出都要过一道质量门*
 - **不达标 → 自动重试**（最多 2 次），取历史最佳结果兜底
 - **全程留痕**：每次调用的校验结果、得分、重试次数写入 Eval 日志，App 内「数据」页可查看
 - 无 API Key 时由启发式评分器兜底，eval 行为保持一致
+- Mock 引擎内置「故意输出不合规」的演示路径：第一次生成必定被质量门拦截，可以直观看到拦截→重试→通过的全过程
 
 ## 功能
 
@@ -46,17 +84,25 @@ DayPilot 的不同之处在于：**每一次 LLM 输出都要过一道质量门*
 
 ## 快速开始
 
+### 在线体验（推荐）
+
+👉 **<https://jin2004-cmd.github.io/daypilot>** —— 手机 / 电脑浏览器直接打开，Mock 模式免 Key 全流程可玩；想要真实 AI 效果，在「设置」里填入自己的 DeepSeek API Key 即可。
+
+### 本地运行
+
 无需构建，纯静态文件：
 
 ```bash
-git clone https://github.com/<you>/daypilot.git
+git clone https://github.com/jin2004-cmd/daypilot.git
 cd daypilot
 # 任意静态服务器，比如：
 python -m http.server 8000
 # 打开 http://localhost:8000
 ```
 
-部署到 GitHub Pages：仓库 Settings → Pages → 选 main 分支根目录，即可获得公开访问链接。
+### 部署到 GitHub Pages
+
+仓库 Settings → Pages → 选 main 分支根目录，即可获得公开访问链接。
 
 ## 技术栈
 
@@ -71,14 +117,17 @@ python -m http.server 8000
 daypilot/
 ├── index.html        # 入口（单页应用）
 ├── manifest.json     # PWA 清单（可添加到主屏幕）
-├── css/style.css     # 移动端优先样式
-└── js/
-    ├── templates.js  # 预置目标池与模板
-    ├── store.js      # localStorage 数据层 + 统计
-    ├── llm.js        # LLM 客户端（DeepSeek 真实接口 + Mock 引擎）
-    ├── eval.js       # ⭐ Eval 质量门（规则校验 + 打分 + 自动重试）
-    ├── ics.js        # .ics 日历导出
-    └── app.js        # 视图层（今日/规划/复盘/数据/设置）
+├── icon.svg          # 图标
+├── css/style.css     # 移动端优先样式 + 深色模式 + 桌面端适配
+├── js/
+│   ├── templates.js  # 预置目标池与模板
+│   ├── store.js      # localStorage 数据层 + 统计
+│   ├── llm.js        # LLM 客户端（DeepSeek 真实接口 + Mock 引擎）
+│   ├── eval.js       # ⭐ Eval 质量门（规则校验 + 打分 + 自动重试）
+│   ├── ics.js        # .ics 日历导出
+│   ├── particles.js  # 桌面端粒子背景
+│   └── app.js        # 视图层（今日/规划/复盘/数据/设置）
+└── docs/             # README 截图
 ```
 
 ## Roadmap
@@ -88,6 +137,31 @@ daypilot/
 - [ ] 可选云同步（Supabase / 自建 KV）
 - [ ] eval 维度可配置化（自定义校验规则与阈值）
 
+## 参与贡献
+
+欢迎 Issue 和 PR：
+
+1. Fork 本仓库
+2. 新建分支：`git checkout -b feat/your-idea`
+3. 提交改动：`git commit -m "feat: your idea"`
+4. 推送并发起 Pull Request
+
+特别是关于 **eval 校验维度** 的想法——什么样的 AI 规划算「好规划」，欢迎来聊。
+
+## English
+
+**DayPilot** is a zero-dependency, zero-backend AI personal-productivity agent for mobile browsers — with a built-in **LLM output evaluation pipeline**: every AI-generated daily plan and evening review must pass a two-layer quality gate (deterministic rule checks + LLM-as-Judge scoring, threshold 7/10, auto-retry up to 2 times), and every evaluation is logged for audit. Features include AI daily planning, gesture-based check-ins, .ics calendar export with alarms, dark mode, streaks, weekly reports, and local-first storage. Bring your own DeepSeek key, or play with the built-in Mock engine.
+
+👉 Live demo: <https://jin2004-cmd.github.io/daypilot>
+
 ## License
 
-MIT
+[MIT](LICENSE) © 2026 jin2004-cmd
+
+---
+
+<div align="center">
+
+如果这个思路对你有启发，欢迎 ⭐ **Star** 一下，让更多人看到「AI 输出需要质量门」这件事。
+
+</div>
